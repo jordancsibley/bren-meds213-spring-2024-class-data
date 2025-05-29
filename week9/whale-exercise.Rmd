@@ -18,22 +18,27 @@ Please complete this exercise in pairs or groups of three. Each group should dow
 #### Package & Data
 
 ```{r}
-
+library(sdcMicro)
 ```
 
 #### Inspect the Dataset
 
 ```{r}
-
+whale_data <- read.csv("week9/whale-sdc.csv")
 ```
 
 #### Q1. How many direct identifiers are present in this dataset? What are they?
 
 A:
 
+case_id, fishery_licence
+
+
+
 #### **Q2. What attributes would you consider quasi-identifiers? Why?**
 
 A:
+ lat + long, year + month + county
 
 #### **Q3. What types of variables are they? Define them. (numeric, integer, factor or string)**
 

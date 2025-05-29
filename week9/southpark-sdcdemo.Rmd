@@ -30,23 +30,23 @@ In summary, our client has three main questions for us (and none of them involve
 
 ```{r}
 #Load package
-
+library(sdcMicro)
 ```
 
 #### Read the dataset
 
 ```{r}
 # Read the CSV dataset into a data frame
-
+data <- read.csv("week9/southpark-sdc.csv")
 ```
 
 #### Taking a closer look at the variables included in this dataset
 
 ```{r}
 # Show the list of variable names and the first rows
-
+head(data)
 # Check the structure of the data frame
-
+str(data)
 ```
 #### Planning 
 
@@ -54,7 +54,7 @@ To develop a disclosure scenario, you must go beyond understanding the contents 
 
 First, let's identify:
 What are the direct identifiers present on this dataset?
-A: ?
+A: 
 
 These should be removed or replaced with tokens before we share the dataset openly.
 
@@ -62,12 +62,13 @@ These should be removed or replaced with tokens before we share the dataset open
 
 Based on the structure of the data frame, we will need to convert some of the variables first.
 
+for sdcMicro you need to convert variables to factor and need to convert numeric data
 ```{r}
-fname = "southpark-sdc.csv"
+fname = "week9/southpark-sdc.csv"
 file <- read.csv(fname)
 file <- varToFactor(obj=file, var=c("zip","age", "sex","race","ethn", "snap", "income", "learn_dis","phys_dis"))
 #Convert to numeric math_sc and read_sc
-
+file <- varToNumeric(obj=file, var=c("math_sc", "read_sc"))
 ```
 
 #### Q1. What is the level of disclosure risk associated with this dataset?
@@ -86,15 +87,17 @@ sdcInitial <- createSdcObj(dat=file,
                        hhId=NULL,
                        strataVar=NULL,
                        pramVars=NULL,
-                       excludeVars=c(), #For now, we won't include stu_id; we'll revisit this decision shortly.
+                       excludeVars=c("dob", "name", "ssn"), #For now, we won't include stu_id; we'll revisit this decision shortly.
                        seed=0,
                        randomizeRecords=FALSE,
                        alpha=c(1))
 # Summary of object
-
+sdcInitial
 ```
 
 What about the stu_id? Why are we keeping it?
+
+Keeping it so we have a unique identifier for each person, but then we will be replacing this number and then removing student id
 
 Take a look at the results below, noting the number of observations that violate the 2-5 anonymity requirements. What does that mean?
 
@@ -103,7 +106,14 @@ Take a look at the results below, noting the number of observations that violate
 ```{r}
 # The threshold depends on the size of the dataset and the access control (conservative numbers for large surveys are 0.04)
 
+# get the risk of re identifiication of the whole dataset 
+sdcInitial@risk$global$risk
+
+# get the risk of re re identifying an indivdual in the data 
+sdcInitial@risk$individual
 ```
+
+result: 81% 
 
 Was it good?
 
